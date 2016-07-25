@@ -1,0 +1,65 @@
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:showIn="@layout/activity_movie_detail"
+    tools:context="com.example.prateek.moviesappv2.MovieDetailActivityFragment"
+    android:id="@+id/container">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Movie_Image"/>
+
+    <TextView
+
+        android:layout_below="@id/Movie_Image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/CodeFont"
+        android:id="@+id/Original_Title"/>
+
+
+    <TextView
+        android:layout_below="@id/Original_Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:id="@+id/release"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Overview"
+        android:id="@+id/O_id"
+        style="@style/CodeFont"
+        android:layout_below="@id/release"/>
+
+    <TextView
+        android:layout_below="@id/O_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Plot"
+        style="@style/Item"/>
+    <TextView
+        android:text="Rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Rat"
+        android:layout_below="@id/Plot"
+        style="@style/CodeFont"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rating"
+        style="@style/Item"
+        android:layout_below="@id/Rat"/>
+</RelativeLayout>
+</ScrollView>
