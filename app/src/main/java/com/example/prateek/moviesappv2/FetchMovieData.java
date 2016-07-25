@@ -110,7 +110,7 @@ public class FetchMovieData extends AsyncTask<String, Void, Void> {
         try {
 
 
-            final String Image_Base = "http://api.themoviedb.org/3/movie/"+Url+"?api_key=e8e92e67635d148d3fc74a61aa393eec";
+            final String Image_Base = "http://api.themoviedb.org/3/movie/"+Url+"?api_key=ADD_KEY";
             Log.v(LOG_TAG, "IN Trry");
 
             Uri builtUri = Uri.parse(Image_Base).buildUpon()
