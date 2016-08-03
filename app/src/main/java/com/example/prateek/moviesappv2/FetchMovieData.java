@@ -26,75 +26,84 @@ import java.util.Vector;
 public class FetchMovieData extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchMovieData.class.getSimpleName();
+    public String sortValue;
     private Context mContext;
-
-
+    public FetchMovieData (Context context) {
+        this.mContext = context;
+    }
 
     private void getMoviesDatafromJason(String movieJsonStr)
             throws JSONException {
 
 //        MovieMain[] movies ;
 //        movies = new MovieMain[0];
-        final String POSTER = "poster_path";
-        final String TITLE = "original_title";
-        final String RELEASE_DATE = "release_date";
-        final String SYNOPSIS = "overview";
-        final String RATING = "popularity";
-        final String MOVIE_ID = "id";
+     /*   String popularMovieQuery = Utility.getPreferedSorting(mContext);
+        if(popularMovieQuery.equals(mContext.getString(R.string.pref_default_value))){
+            sortValue = "popularity.desc";
+        }else {
+            sortValue = "top_rated.desc";
+        }*/
+        if (movieJsonStr != null) {
+            final String POSTER = "poster_path";
+            final String TITLE = "original_title";
+            final String RELEASE_DATE = "release_date";
+            final String SYNOPSIS = "overview";
+            final String RATING = "popularity";
+            final String MOVIE_ID = "id";
 
-        try {
+            try {
 
-            JSONObject imageJson = new JSONObject(movieJsonStr);
-            JSONArray arrayResult = imageJson.getJSONArray("results");
-            Vector<ContentValues>cVVector = new Vector<ContentValues>(arrayResult.length());
+                JSONObject imageJson = new JSONObject(movieJsonStr);
+                JSONArray arrayResult = imageJson.getJSONArray("results");
+                Vector<ContentValues> cVVector = new Vector<ContentValues>(arrayResult.length());
 
-           // movies = new MovieMain[arrayResult.length()];
+                // movies = new MovieMain[arrayResult.length()];
 
-            for (int i = 0; i < arrayResult.length(); i++) {
+                for (int i = 0; i < arrayResult.length(); i++) {
 
-                String img_path;
-                String title;
-                String sypnosis;
-                String movie_release;
-                String rating;
-                String id;
+                    String img_path;
+                    String title;
+                    String sypnosis;
+                    String movie_release;
+                    String rating;
+                    String id;
 
-                JSONObject imgDisplay = arrayResult.getJSONObject(i);
+                    JSONObject imgDisplay = arrayResult.getJSONObject(i);
 
-                img_path = "http://image.tmdb.org/t/p/w500" + imgDisplay.getString(POSTER);
-                title = imgDisplay.getString(TITLE);
-                movie_release = imgDisplay.getString(RELEASE_DATE);
-                sypnosis = imgDisplay.getString(SYNOPSIS);
-                rating = imgDisplay.getString(RATING);
-                id = imgDisplay.getString(MOVIE_ID);
+                    img_path = "http://image.tmdb.org/t/p/w500" + imgDisplay.getString(POSTER);
+                    title = imgDisplay.getString(TITLE);
+                    movie_release = imgDisplay.getString(RELEASE_DATE);
+                    sypnosis = imgDisplay.getString(SYNOPSIS);
+                    rating = imgDisplay.getString(RATING);
+                    id = imgDisplay.getString(MOVIE_ID);
 
 //                MovieMain element = new MovieMain(img_path, title, sypnosis, movie_release, rating);
 //                movies[i] = element;
 
-                ContentValues movieValues = new ContentValues();
-                movieValues.put(MovieContract.MovieEntry._ID, id);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, title);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMG, img_path);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, sypnosis);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_DATE, movie_release);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_RATINGS, rating);
+                    ContentValues movieValues = new ContentValues();
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, id);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, title);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMG, img_path);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, sypnosis);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_DATE, movie_release);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_RATINGS, rating);
 
-                cVVector.add(movieValues);
-                Log.v(LOG_TAG,img_path);
-            }
-            int inserted = 0;
-            if (cVVector.size() > 0){
-                ContentValues[] cvvArray = new ContentValues[cVVector.size()];
-                cVVector.toArray(cvvArray);
-                inserted = mContext.getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, cvvArray);
-            }
-            Log.d(LOG_TAG, "Fetching Done " + inserted + "Inserted");
+                    cVVector.add(movieValues);
+                    Log.v(LOG_TAG, img_path);
+                }
+                int inserted = 0;
+                if (cVVector.size() > 0) {
+                    ContentValues[] cvvArray = new ContentValues[cVVector.size()];
+                    cVVector.toArray(cvvArray);
+                    inserted = mContext.getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, cvvArray);
+                }
+                Log.d(LOG_TAG, "Fetching Done " + inserted + "Inserted");
 
-        }catch (JSONException e){
-            e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
-
     @Override
     protected Void doInBackground(String... params) {
 
@@ -110,11 +119,14 @@ public class FetchMovieData extends AsyncTask<String, Void, Void> {
         try {
 
 
-            final String Image_Base = "http://api.themoviedb.org/3/movie/"+Url+"?api_key=ADD_KEY";
+            final String Image_Base = "http://api.themoviedb.org/3/discover/movie/";
+            final String SORT_BY = "sort_by";
+            final String API_KEY_PARAM = "api_key";
             Log.v(LOG_TAG, "IN Trry");
 
             Uri builtUri = Uri.parse(Image_Base).buildUpon()
-
+                    .appendQueryParameter(SORT_BY,Url)
+                    .appendQueryParameter(API_KEY_PARAM, BuildConfig.OPEN_MOVIE_API_KEY)
                     .build();
 
             URL url = new URL(builtUri.toString());

@@ -18,22 +18,16 @@ import com.squareup.picasso.Picasso;
  */
 public class CustomAdapter extends CursorAdapter {
 
-    private Context mContext;
     private static int sLoaderID;
+    private Context mContext;
 
-    public static class ViewHolder{
-        public final ImageView imgView;
-
-        public ViewHolder(View view){
-            imgView = (ImageView) view.findViewById(R.id.image_view);
-        }
-    }
     public CustomAdapter(Context context, Cursor c, int flags , int loaderID)
     {
         super(context, c, flags);
         mContext = context;
         sLoaderID = loaderID;
     }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent){
      int layoutId = R.layout.movies_main;
@@ -50,6 +44,7 @@ public class CustomAdapter extends CursorAdapter {
 //       Picasso.with(getContext()).load(movieMain.img_url).into(imgView);
 //    return convertView;
     }
+
     @Override
     public void bindView(View view, Context context, Cursor cursor){
 
@@ -59,7 +54,15 @@ public class CustomAdapter extends CursorAdapter {
 //        final String versionName = cursor.getString(viresionIndex);
 //        viewHolder.
         int imgIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_IMG);
-        int image = cursor.getInt(imgIndex);
+        final String image = cursor.getString(imgIndex);
         Picasso.with(mContext).load(image).into(viewHolder.imgView);
+    }
+
+    public static class ViewHolder{
+        public final ImageView imgView;
+
+        public ViewHolder(View view){
+            imgView = (ImageView) view.findViewById(R.id.image_view);
+        }
     }
 }

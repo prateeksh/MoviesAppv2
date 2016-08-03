@@ -1,7 +1,9 @@
 package com.example.prateek.moviesappv2;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.prateek.moviesappv2.data.MovieContract;
@@ -21,13 +24,21 @@ import com.example.prateek.moviesappv2.data.MovieContract;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    //private MovieMain movieMain;
+    private static final int CURSOR_LOADER_ID = 0;
+    private static final String[] MOVIE_COLMNS = {
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_MOVIE_IMG
+    };
+    private static final int COL_MOVIE_ID = 0;
+    private static final int COL_MOVIE_TITLE = 1;
+    private static final int COL_MOVIE_POSTER = 2;
     private String LOG = MainActivityFragment.class.getName();
     private CustomAdapter customAdapter;
     private GridView gridView;
-    private MovieMain movieMain;
+    private int mPostiton = GridView.INVALID_POSITION;
 
-    private static final int CURSOR_LOADER_ID = 0;
-    private static final int COL_MOVIE_ID = 0;
     public MainActivityFragment() {
     }
 
@@ -45,28 +56,32 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         gridView = (GridView) rootView.findViewById(R.id.gridview);
         gridView.setAdapter(customAdapter);
 
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-//                if (cursor != null){
-//                    ((Callback) getActivity().onMenuItemSelected(MovieContract.MovieEntry.buildMovieUri(cursor.getInt(COL_MOVIE_ID))));
-//                }
-//            }
-//        });
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                if (cursor != null) {
+                    Intent intent = new Intent(getActivity(),MovieDetailActivity.class)
+                            .setData(MovieContract.MovieEntry.buildMovieUri(cursor.getInt(COL_MOVIE_ID)));
+                    startActivity(intent);
+//                    ((Callback) getActivity()).onItemSelected(MovieContract.MovieEntry
+//                            .buildMovieUri(cursor.getInt(COL_MOVIE_ID)));
+                }
+                mPostiton = position;
+            }
+        });
 
     return rootView;
     }
-
-
 
     @Override
     public void onStart() {
         Log.v(LOG, "This is onStart");
         super.onStart();
 
-         FetchMovieData fetchMovieData = new FetchMovieData();
+        FetchMovieData fetchMovieData = new FetchMovieData(getContext());
+        getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String url = prefs.getString(getString(R.string.pref_key),
                 getString(R.string.pref_default_name));
@@ -90,6 +105,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle){
+      return new CursorLoader(getActivity(), MovieContract.MovieEntry.CONTENT_URI,
+              MOVIE_COLMNS,
+              null,
+              null,
+              null);
+    }
+
 //    public void insertMovieData(){
 //
 //        ContentValues movieVlaues = new ContentValues();
@@ -107,22 +131,20 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 //    }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle){
-      return new CursorLoader(getActivity(), MovieContract.MovieEntry.CONTENT_URI,
-              null,
-              null,
-              null,
-              null);
-    }
-
-    @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data){
         customAdapter.swapCursor(data);
+        if(mPostiton != GridView.INVALID_POSITION){
+            gridView.smoothScrollToPosition(mPostiton);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader){
      customAdapter.swapCursor(null);
+    }
+
+    public interface Callback{
+        public void onItemSelected(Uri dateUri);
     }
 
 //        protected void onPostExecute(MovieMain[] result) {
