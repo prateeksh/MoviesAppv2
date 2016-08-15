@@ -10,7 +10,7 @@
     <fragment
         android:id="@+id/fragment_movie"
         android:name="com.example.prateek.moviesappv2.MainActivityFragment"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="2"
         tools:layout= "@android:layout/list_content"

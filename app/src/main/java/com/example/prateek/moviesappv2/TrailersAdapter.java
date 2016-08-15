@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,7 +23,7 @@ public class TrailersAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent){
 
-        View view = LayoutInflater.from(context).inflate(R.layout.movie_trailers, parent);
+        View view = LayoutInflater.from(context).inflate(R.layout.movie_trailers, parent, false);
         ViewHolder viewHolder = new ViewHolder();
         viewHolder.icon = (ImageView) view.findViewById(R.id.trailer_thumbnail);
         view.setTag(viewHolder);
@@ -54,6 +53,5 @@ public class TrailersAdapter extends CursorAdapter {
 
     public class ViewHolder {
         public ImageView icon;
-        public TextView textView;
     }
 }

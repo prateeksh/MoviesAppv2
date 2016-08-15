@@ -24,19 +24,27 @@ public class MovieProvider extends ContentProvider {
     static final int MOVIE_REVIEW = 400;
     static final int MOVIE_REVIEW_WITH_ID = 401;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+
     private static final String LOG_TAG = MovieProvider.class.getSimpleName();
+
     private static final String sMovieIsPopularSelection = MovieContract.MovieEntry.TABLE_NAME +
             "." + MovieContract.MovieEntry.COLUMN_IS_POPULAR + " = ? ";
+
     private static final String sMovieIsFavoriteSelection = MovieContract.MovieEntry.TABLE_NAME +
             "." + MovieContract.MovieEntry.COLUMN_IS_FAVORITE + " = ? ";
+
     private static final String sMovieIsTopRatedSelection = MovieContract.MovieEntry.TABLE_NAME +
             "." + MovieContract.MovieEntry.COLUMN_IS_TOP_RATED + " = ? ";
+
     private static final String sMovieByIdSelection = MovieContract.MovieEntry.TABLE_NAME +
             "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
+
     private static final String sMovieTrailerByIdSelection = MovieContract.MovieTrailerEntry.TABLE_NAME +
             "." + MovieContract.MovieTrailerEntry.COLUMN_ID + " = ? ";
+
     private static final String sMovieReviewByIdSelection = MovieContract.MovieReviewEntry.TABLE_NAME +
             "." + MovieContract.MovieReviewEntry.COLUMN_ID + " = ? ";
+
     private MovieDbHelper mOpenHelper;
 
     private static UriMatcher buildUriMatcher() {

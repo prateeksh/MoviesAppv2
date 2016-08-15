@@ -27,8 +27,10 @@ public class TrailerTab extends Fragment implements LoaderCallbacks<Cursor>{
     public static final int COL_MOVIE_TRAILER_KEY = 2;
     static final int COL_ID = 0;
     static final int COL_MOVIE_TRAILER_ID = 1;
+
     private static final String BASE_URL = "https://www.youtube.com/watch?v=";
     private static final int TRAILER_LOADER = 0;
+
     private static final String[] TRAILER_COLUMNS = {
             MovieContract.MovieTrailerEntry.TABLE_NAME + "." + MovieContract.MovieTrailerEntry._ID,
             MovieContract.MovieTrailerEntry.TABLE_NAME + "." + MovieContract.MovieTrailerEntry.COLUMN_ID,

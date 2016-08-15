@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MovieDbHelper extends SQLiteOpenHelper{
 
 
-    public static final String DATABASE_NAME = "popmovie.db";
+    public static final String DATABASE_NAME = "movie.db";
 
     private static final int DATABASE_VERSION = 13;
 
@@ -66,9 +66,9 @@ public class MovieDbHelper extends SQLiteOpenHelper{
     }
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion){
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS" + MovieContract.MovieEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS" + MovieContract.MovieReviewEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS" + MovieContract.MovieTrailerEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieReviewEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieTrailerEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

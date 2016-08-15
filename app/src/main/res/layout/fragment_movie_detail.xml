@@ -69,12 +69,12 @@
 
         android:text="Overview"/>
 
-    <!--<TextView
+    <TextView
         android:id="@+id/Plot"
         style="@style/Item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/O_id"/>-->
+        android:layout_below="@id/O_id"/>
     </LinearLayout>
 
     <TextView

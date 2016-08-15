@@ -114,7 +114,7 @@ public class MovieContract {
             public static final String TABLE_NAME = "trailer";
 
             // Columns in the Trailer DB
-            public static final String COLUMN_ID = "trailer_id";
+            public static final String COLUMN_ID = "id";
             public static final String COLUMN_MOVIE_ID = "movie_id";
             public static final String COLUMN_KEY = "key";
 

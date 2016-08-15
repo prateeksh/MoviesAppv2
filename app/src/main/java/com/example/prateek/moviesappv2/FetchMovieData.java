@@ -40,10 +40,10 @@ public class FetchMovieData extends AsyncTask<String, Void, Void> {
     public FetchMovieData (Context context) {
         this.mContext = context;
         mOpenHelper = new MovieDbHelper(mContext);
-        mSchemeName = "http";
-        mAuthorityName = "api.themoviedb.org";
-        mUrlNumber = "3";
-        mMovieUrl = "movie";
+        mSchemeName = mContext.getResources().getString(R.string.scheme_name);
+        mAuthorityName = mContext.getResources().getString(R.string.authority_movie);
+        mUrlNumber = mContext.getResources().getString(R.string.url_number);
+        mMovieUrl = mContext.getResources().getString(R.string.movie_url);
     }
 
     @Override
@@ -78,10 +78,10 @@ public class FetchMovieData extends AsyncTask<String, Void, Void> {
                         categoryType = MovieContract.MovieEntry.COLUMN_IS_POPULAR;
                         break;
                     }
-                    /*case MovieEntry.FAVORITE: {
-                        categoryType = MovieEntry.COLUMN_IS_FAVORITE;
+                    case MovieContract.MovieEntry.FAVORITE: {
+                        categoryType = MovieContract.MovieEntry.COLUMN_IS_FAVORITE;
                         break;
-                    }*/
+                    }
                     case MovieContract.MovieEntry.TOP_RATED: {
                         categoryType = MovieContract.MovieEntry.COLUMN_IS_TOP_RATED;
                         break;
@@ -125,12 +125,14 @@ public class FetchMovieData extends AsyncTask<String, Void, Void> {
                         String selection = MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
                         updatedRow = mContext.getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI,
                                 movieValues, selection, new String[]{Long.toString(id)});
-                    } else if (movieIdFlag == 1) {
+                    }
+                    else if (movieIdFlag == 1) {
                         movieValues.put(categoryType, 1);
                         int updatedRow = 0;
                         String selection = MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
                         updatedRow = mContext.getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, movieValues, selection, new String[]{Long.toString(id)});
-                    } else if (movieIdFlag == 0) {
+                    }
+                    else if (movieIdFlag == 0) {
                         movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, id);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, title);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMG, img_path);
@@ -139,6 +141,10 @@ public class FetchMovieData extends AsyncTask<String, Void, Void> {
                         movieValues.put(MovieContract.MovieEntry.COLUMN_USER_RATING, user_rating);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, popularity);
                         movieValues.put(categoryType, 1);
+
+                        getMovieTrailerDetailsFromId(id);
+
+                        getMovieReviewsDetailsFromId(id);
 
                         cVVector.add(movieValues);
                         Log.v(LOG_TAG, movie_release);

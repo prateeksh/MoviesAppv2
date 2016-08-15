@@ -1,10 +1,9 @@
 package com.example.prateek.moviesappv2;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -67,13 +66,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         customAdapter = new CustomAdapter(getActivity(), null, 0);
+
         gridView = (GridView) rootView.findViewById(R.id.gridview);
         gridView.setAdapter(customAdapter);
 
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+
             @Override
             public void onGlobalLayout() {
+
+                gridView.setAdapter(customAdapter);
+
                 if (mPosition != GridView.INVALID_POSITION) {
                     gridView.smoothScrollToPosition(mPosition);
                 }
@@ -148,8 +151,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data){
+        if (!data.moveToFirst() && Utility.getPreferedSorting(getActivity()).equals(MovieContract.MovieEntry.FAVORITE)) {
+            Snackbar.make(rootView, R.string.no_movies, Snackbar.LENGTH_LONG)
+                    .show();
+        }
         customAdapter.swapCursor(data);
-
     }
 
     public void onSortingOrderChanged(){

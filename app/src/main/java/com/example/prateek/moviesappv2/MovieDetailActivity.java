@@ -30,6 +30,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        this.setTitle(tabTitle[0]);
+
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(tabTitle[0]));
         tabLayout.addTab(tabLayout.newTab().setText(tabTitle[1]));
@@ -72,6 +74,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu){
         Uri uri = getIntent().getData();
         Log.v("LOG_TAG", uri.toString());
+        getMenuInflater().inflate(R.menu.menu_movie_detail, menu);
         if(uri!= null) {
             long id = MovieContract.MovieEntry.getMovieIdFromUri(uri);
             int isFavorite = MovieDetailActivityFragment.getState(id, this);
