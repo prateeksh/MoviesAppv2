@@ -25,16 +25,17 @@ import com.example.prateek.moviesappv2.data.MovieContract;
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
+    public static final int CURSOR_LOADER_ID = 0;
+    public static final int COL_MOVIE_ID = 0;
+    public static final int COL_MOVIE_URI_ID = 1;
      static final int COL_MOVIE_POSTER = 2;
     private static final String[] DETAIL_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID,
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_IMG,
     };
-    private static final int CURSOR_LOADER_ID = 0;
-    private static final int COL_MOVIE_ID = 0;
-    private static final int COL_MOVIE_URI_ID = 1;
     private static final String SELECTED_KEY = "selected_position";
+
     private static int height;
     private static int width;
     private String LOG = MainActivityFragment.class.getName();

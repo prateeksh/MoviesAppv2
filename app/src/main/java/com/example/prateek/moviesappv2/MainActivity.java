@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                         .commit();
             }
         }else{
+            Log.v(LOG_TAG, "no twopane");
             sTwoPane = false;
         }
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

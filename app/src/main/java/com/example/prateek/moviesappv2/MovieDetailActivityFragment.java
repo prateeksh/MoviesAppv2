@@ -77,14 +77,7 @@ public class MovieDetailActivityFragment extends Fragment implements
         setHasOptionsMenu(true);
     }
 
-    public static int getState(long movieId, Context context){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                "Favorite", Context.MODE_PRIVATE
-        );
-        String key = "State" + Long.toString(movieId);
-        Log.v(LOG_TAG,key);
-        return sharedPreferences.getInt(key, 0);
-    }
+
 
     /*@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,12 +86,22 @@ public class MovieDetailActivityFragment extends Fragment implements
         setHasOptionsMenu(true);
     }*/
 
+    public static int getState(long movieId, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                "Favorite", Context.MODE_PRIVATE
+        );
+        String key = "State" + Long.toString(movieId);
+        Log.v(LOG_TAG, key);
+        return sharedPreferences.getInt(key, 0);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
         switch (id){
             case R.id.favorite_button:{
                 changeFavorites(MainActivity.getPaneMode());
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
@@ -165,6 +168,20 @@ public class MovieDetailActivityFragment extends Fragment implements
                 return false;
             }
         });
+
+        if(MainActivity.getPaneMode()){
+            mImageButton = (ImageButton) rootView.findViewById(R.id.favorite_button_tab);
+            mImageButton.setOnClickListener(this);
+
+            mDivider = rootView.findViewById(R.id.divider);
+            mHeader = (TextView) rootView.findViewById(R.id.header);
+
+            mTrailerButton = (Button) rootView.findViewById(R.id.trailer_button);
+            mTrailerButton.setOnClickListener(this);
+
+            mReviewButton = (Button) rootView.findViewById(R.id.review_button);
+            mReviewButton.setOnClickListener(this);
+        }
         return rootView;
     }
 
@@ -184,8 +201,7 @@ public class MovieDetailActivityFragment extends Fragment implements
                 break;
             }
             case R.id.favorite_button_tab:{
-                fragment.setArguments(args);
-                replaceFragment(fragment);
+                changeFavorites(MainActivity.getPaneMode());
             }
         }
         if (fragment != null) {
@@ -321,7 +337,7 @@ public class MovieDetailActivityFragment extends Fragment implements
         );
         SharedPreferences.Editor editor = sharedPreferences.edit();
         String key = "State" +Long.toString(movieId);
-        editor.putInt(key,isFavorite);
+        editor.putInt(key, isFavorite);
         editor.apply();
     }
 }

@@ -41,9 +41,11 @@ public class CustomAdapter extends CursorAdapter {
         String poster_path = cursor.getString(MainActivityFragment.COL_MOVIE_POSTER);
         int width = MainActivityFragment.getWidth();
         int height = MainActivityFragment.getHeight();
+
         width = (MainActivity.getPaneMode())? width : (width/2);
         height = (context.getResources().getConfiguration().orientation == 1) ? (height/2) : height;
-        Picasso.with(context).load(baseUrl + poster_path).resize(width,height).into(viewHolder.imgView);
+        Picasso.with(context).load(baseUrl + poster_path).placeholder(R.drawable.android_placeholder)
+                .resize(width, height).into(viewHolder.imgView);
     }
 
     public static class ViewHolder{
