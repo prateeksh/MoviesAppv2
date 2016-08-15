@@ -1,24 +1,49 @@
 package com.example.prateek.moviesappv2;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+import com.facebook.stetho.Stetho;
+
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
+
+    private static final String MAINACTIVITYFRAGMENT_TAG = "MAFTAG";
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static boolean sTwoPane;
+    private String mSortOrder;
+
+    public static boolean getPaneMode() {
+        return sTwoPane;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mSortOrder = Utility.getPreferedSorting(this);
         super.onCreate(savedInstanceState);
+        Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       // setSupportActionBar(toolbar);
 
+        if (findViewById(R.id.movie_detail_container) != null){
+            sTwoPane = true;
+            if (savedInstanceState == null){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new MovieDetailActivityFragment(), MAINACTIVITYFRAGMENT_TAG)
+                        .commit();
+            }
+        }else{
+            sTwoPane = false;
+        }
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,5 +75,54 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        String sortOrder = Utility.getPreferedSorting(this);
+        //update the sorting order in our second pane using the fragment manager
+        if (sortOrder != null && !sortOrder.equals(mSortOrder)) {
+            MainActivityFragment maf = (MainActivityFragment)getSupportFragmentManager().findFragmentById(R.id.fragment);
+            if ( null != maf ) {
+                maf.onSortingOrderChanged();
+            }
+            MovieDetailActivityFragment df = (MovieDetailActivityFragment)getSupportFragmentManager().findFragmentByTag(MAINACTIVITYFRAGMENT_TAG);
+            if ( null != df ) {
+                df.onSortingOrderChanged();
+            }
+        }
+        mSortOrder = sortOrder;
+        super.onResume();
+    }
+
+    @Override
+    public void onItemSelected(Uri contentUri){
+
+        if(sTwoPane){
+            Bundle args = new Bundle();
+            Log.v(LOG_TAG,args.toString());
+            args.putParcelable(MovieDetailActivityFragment.DETAIL_URI, contentUri);
+
+            MovieDetailActivityFragment fragment = new MovieDetailActivityFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, fragment, MAINACTIVITYFRAGMENT_TAG)
+                    .commit();
+        }else{
+            Intent intent = new Intent(this, MovieDetailActivity.class)
+                    .setData(contentUri);
+            Log.v(LOG_TAG, contentUri.toString());
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStackImmediate();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

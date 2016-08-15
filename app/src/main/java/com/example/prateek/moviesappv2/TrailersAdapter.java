@@ -1,32 +1,59 @@
 package com.example.prateek.moviesappv2;
 
-import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Prateek on 28-07-2016.
  */
-public class TrailersAdapter extends ArrayAdapter<MovieTrailer> {
+public class TrailersAdapter extends CursorAdapter {
+    private final String thumbnailBaseUrl = "https://img.youtube.com/vi/";
 
-    public TrailersAdapter(Activity context, List<MovieTrailer> result){
-        super(context, 0 , result);
+    public TrailersAdapter(Context context, Cursor c, int flags){
+        super(context, c, flags);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View newView(Context context, Cursor cursor, ViewGroup parent){
 
-        MovieTrailer result = getItem(position);
-        if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_item,parent,false);
-            TextView trailerName = (TextView)convertView.findViewById(R.id.trailer_item_textTitle);
-            trailerName.setText(result.name);
+        View view = LayoutInflater.from(context).inflate(R.layout.movie_trailers, parent);
+        ViewHolder viewHolder = new ViewHolder();
+        viewHolder.icon = (ImageView) view.findViewById(R.id.trailer_thumbnail);
+        view.setTag(viewHolder);
+        return view;
+
+    }
+
+    @Override
+    public void bindView(View view, final Context context, Cursor cursor){
+        final ViewHolder holder = (ViewHolder) view.getTag();
+        String videoUrl;
+        videoUrl = cursor.getString(TrailerTab.COL_MOVIE_TRAILER_KEY);
+        int width = TrailerTab.getWidth();
+        int height = TrailerTab.getHeight();
+        height = (context.getResources().getConfiguration().orientation == 2) ? height : (height/2);
+
+        String thumbnail = thumbnailBaseUrl + videoUrl + "/0.jpg";
+
+        if (videoUrl != null) {
+            Picasso.with(context).load(thumbnail).placeholder(R.drawable.play_logo).error(R.drawable.play_logo)
+                    .resize(width, height).into(holder.icon);
         }
-        return convertView;
+        else {
+            Picasso.with(context).load(R.drawable.android_placeholder).resize(width, height).into(holder.icon);
+        }
+    }
+
+    public class ViewHolder {
+        public ImageView icon;
+        public TextView textView;
     }
 }

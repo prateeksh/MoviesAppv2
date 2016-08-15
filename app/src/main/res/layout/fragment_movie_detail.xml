@@ -1,21 +1,28 @@
-<ScrollView
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_scrollview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<RelativeLayout android:id="@+id/container"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MovieDetailActivityFragment"
+    tools:shownIn="@layout/activity_movie_detail">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        android:orientation="horizontal"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.prateek.moviesappv2.MovieDetailActivityFragment"
-    tools:showIn="@layout/activity_movie_detail">
 
-    <ImageView
-        android:id="@+id/Movie_Image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    tools:showIn="@layout/activity_movie_detail">
 
     <TextView
 
@@ -23,88 +30,59 @@
         style="@style/CodeFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Movie_Image"/>
-
-
-    <TextView
+        />
+    />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/Movie_Image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
+        <TextView
         android:id="@+id/release"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Original_Title"
         android:textSize="22sp"
         android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/Rat"
+                style="@style/CodeFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
+                android:text="Rating"/>
+            </LinearLayout>
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <TextView
         android:id="@+id/O_id"
         style="@style/CodeFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/release"
+
         android:text="Overview"/>
 
-    <TextView
+    <!--<TextView
         android:id="@+id/Plot"
         style="@style/Item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/O_id"/>
-    <TextView
-        android:id="@+id/Rat"
-        style="@style/CodeFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/Plot"
-        android:text="Rating"/>
+        android:layout_below="@id/O_id"/>-->
+    </LinearLayout>
+
     <TextView
         android:id="@+id/rating"
         style="@style/Item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Rat"/>
-    <TextView
-        android:id="@+id/TrailerText"
-        style="@style/CodeFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rating"
-        android:layout_gravity="center"
-        android:text="Trailers"/>
-
-    <GridView
-        android:id="@+id/listview_trailers"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/TrailerText">
-
-    </GridView>
-    <TextView
-        android:id="@+id/txtReview"
-        style="@style/CodeFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/listview_trailers"
-        android:layout_gravity="center"
-        android:text="Reviews"
-        />
-
-    <ListView
-        android:id="@+id/listview_reviews"
-        style="@style/Item"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/txtReview">
-    </ListView>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/Rat"
-        android:layout_marginEnd="62dp"
-        android:layout_marginRight="62dp"
-        android:text="Favorite" />
-
-</RelativeLayout>
-</ScrollView>
+      />
+    </LinearLayout>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

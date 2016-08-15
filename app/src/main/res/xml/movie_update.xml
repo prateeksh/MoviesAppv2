@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     >
+    <PreferenceCategory
+        android:title="Sort Order">
     <ListPreference
-        android:key="@string/pref_key"
-        android:title="@string/pref_default_name"
+        android:defaultValue="@string/pref_default_value"
         android:entries="@array/pref_entries"
         android:entryValues="@array/pref_entry_values"
-        android:defaultValue="@string/pref_default_value"
+        android:key="@string/pref_sort_key"
         android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
+        android:positiveButtonText="@null"
+        android:title="@string/pref_sort_label" />
+    </PreferenceCategory>
 </PreferenceScreen>

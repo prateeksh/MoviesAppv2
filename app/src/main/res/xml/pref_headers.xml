@@ -2,7 +2,7 @@
 
     <!-- These settings headers are only used on tablets. -->
 
-    <header
+   <!-- <header
         android:fragment="com.example.prateek.moviesappv2.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" android:icon="@drawable/ic_info_black_24dp" />
 
@@ -17,5 +17,5 @@
     <header
         android:fragment="com.example.prateek.moviesappv2.SettingsActivity$DataChange"
         android:title="Change Movie Preferences" />
-
+-->
 </preference-headers>

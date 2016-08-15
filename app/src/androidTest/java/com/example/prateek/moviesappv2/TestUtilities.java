@@ -39,7 +39,7 @@ public class TestUtilities extends AndroidTestCase{
        ContentValues movieValues = new ContentValues();
        movieValues.put(MovieContract.MovieEntry.COLUMN_DATE,2016-06-12);
        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "Good Movies");
-       movieValues.put(MovieContract.MovieEntry.COLUMN_RATINGS,21.001);
+       movieValues.put(MovieContract.MovieEntry.COLUMN_USER_RATING,21.001);
        movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Caption America");
        return movieValues;
    }

@@ -1,340 +1,327 @@
 package com.example.prateek.moviesappv2;
 
 
-import android.content.Intent;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.prateek.moviesappv2.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.util.Arrays;
-
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieDetailActivityFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener{
 
-    static final String DETAIL_URI = "URI";
+
+    public static final String DETAIL_URI = "DETAIL_URI";
     private static final String LOG_TAG = MovieDetailActivityFragment.class.getSimpleName();
     private static final String[] DETAIL_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW,
-            MovieContract.MovieEntry.COLUMN_MOVIE_IMG,
-            MovieContract.MovieEntry.COLUMN_RATINGS,
-            MovieContract.MovieEntry.COLUMN_DATE,
-            //MovieContract.MovieEntry.COLUMN_FAVORITE
-
-    };
-   /* private static final String[] DETAIL_REVIEW = {
-            MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID,
-            MovieContract.ReviewEntry.COLUMN_MOVIE_ID,
-            MovieContract.ReviewEntry.COLUMN_REVIEW_ID,
-            MovieContract.ReviewEntry.COLUMN_CONTENT,
-            MovieContract.ReviewEntry.COLUMN_MOVIE_AUTHOR
-    };
-    private static final String[] TRAILER_REVIEW = {
-            MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
-            MovieContract.TrailerEntry.COLUMN_MOVIE_ID,
-            MovieContract.TrailerEntry.COLUMN_TRAILER_ID,
-            MovieContract.TrailerEntry.COLUMN_KEY,
-            MovieContract.TrailerEntry.COLUMN_NAME
-    };*/
-    private static final int COL_MOVIE_ID = 0;
-    private static final int COL_MOVIE_TITLE = 1;
-    private static final int COL_MOVIE_OVERVIEW = 2;
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_IMG,
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_USER_RATING,
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_DATE,
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_OVERVIEW,
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_IS_FAVORITE
+     };
+    private static final int COL_MOVIE_ID = 1;
+    private static final int COL_MOVIE_URI_ID = 2;
     private static final int COL_MOVIE_IMG = 3;
-    private static final int COL_MOVIE_RATING = 4;
+    private static final int COL_MOVIE_TITLE = 4;
     private static final int COL_MOVIE_RELEASE = 5;
-    private static final int COL_MOVIE_FAVOURITE = 6;
-    //public View rootView;
+    private static final int COL_MOVIE_RATING = 6;
+    private static final int COL_MOVIE_OVERVIEW = 7;
+    private static final int COL_IS_FAVORITE = 8;
     private static final int CURSOR_LOADER_ID = 0;
-    public static String MovieId;
-    public boolean mIsFavourite;
-    public ReviewAdapter reviewsadapter;
-    public ListView ListReviews;
-    private int mPosition;
+    private Uri mUri;
+    private long MovieId;
+    private ImageButton mImageButton;
+    private TextView mHeader;
+    private View mDivider;
+    private Button mTrailerButton;
+    private Button mReviewButton;
+
+    private int mIsFavorite;
     private ImageView mMoviePoster;
     private TextView mMovieTitle;
     private TextView mMovieOverview;
     private TextView mMovieRating;
     private TextView mMovieRelease;
-    private Uri mUri;
+
     public MovieDetailActivityFragment() {
         setHasOptionsMenu(true);
     }
 
-    public static void setListViewHeightBasedOnChildren(ListView listView){
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
+    public static int getState(long movieId, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                "Favorite", Context.MODE_PRIVATE
+        );
+        String key = "State" + Long.toString(movieId);
+        Log.v(LOG_TAG,key);
+        return sharedPreferences.getInt(key, 0);
     }
+
+    /*@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        switch (id){
+            case R.id.favorite_button:{
+                changeFavorites(MainActivity.getPaneMode());
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.v(LOG_TAG, "this is detail activity");
         Bundle arguments = getArguments();
-        if(arguments != null) {
+        if(arguments != null){
             mUri = arguments.getParcelable(MovieDetailActivityFragment.DETAIL_URI);
+            Log.v(LOG_TAG, "argumnts not null");
         }
+        Log.v(LOG_TAG, "arguments null");
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
-
-
-           mMoviePoster = (ImageView) rootView.findViewById(R.id.Movie_Image);
+        //mMovieAdapter = new CustomAdapter(getActivity(), null, 0);
+        mMoviePoster = (ImageView) rootView.findViewById(R.id.Movie_Image);
            //Picasso.with(getContext()).load(Image).into(imgView);
 
-           mMovieTitle = (TextView) rootView.findViewById(R.id.Original_Title);
+        mMovieTitle = (TextView) rootView.findViewById(R.id.Original_Title);
            //textView.setText(display);
 
-           mMovieRelease = (TextView) rootView.findViewById(R.id.release);
+        mMovieRelease = (TextView) rootView.findViewById(R.id.release);
            //textView1.setText(display2);
 
-            mMovieOverview = (TextView) rootView.findViewById(R.id.Plot);
+        mMovieOverview = (TextView) rootView.findViewById(R.id.Plot);
            //textView2.setText(synp);
 
-            mMovieRating = (TextView) rootView.findViewById(R.id.rating);
+        mMovieRating = (TextView) rootView.findViewById(R.id.rating);
            //textView3.setText(rat);
+        NestedScrollView scrollView = (NestedScrollView) rootView.findViewById(R.id.detail_scrollview);
+        scrollView.setOnTouchListener(new View.OnTouchListener() {
+            int dragThreshold = 30;
+            int downX;
+            int downY;
 
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        downX = (int) event.getRawX();
+                        downY = (int) event.getRawY();
+                        break;
+                    }
+                    case MotionEvent.ACTION_MOVE: {
+                        int distanceX = Math.abs((int) event.getRawX() - downX);
+                        int distanceY = Math.abs((int) event.getRawY() - downY);
+
+                        if (distanceY > distanceX) {
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                        } else if (distanceX > distanceY && distanceX > dragThreshold) {
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                        }
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
         return rootView;
     }
 
     @Override
+    public void onClick(View v){
+        Fragment fragment = null;
+        Bundle args = new Bundle();
+        switch (v.getId()){
+            case R.id.trailer_button: {
+                args.putParcelable(TrailerTab.TRAILER_URI, mUri);
+                fragment = new TrailerTab();
+                break;
+            }
+            case R.id.review_button: {
+                args.putParcelable(ReviewTab.REVIEW_URI, mUri);
+                fragment = new ReviewTab();
+                break;
+            }
+            case R.id.favorite_button_tab:{
+                fragment.setArguments(args);
+                replaceFragment(fragment);
+            }
+        }
+        if (fragment != null) {
+            fragment.setArguments(args);
+            replaceFragment(fragment);
+        }
+    }
+
+    public void replaceFragment (Fragment fragment){
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.movie_detail_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(CURSOR_LOADER_ID,null,this);
+        getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    public void onSortingOrderChanged(){
+        Uri uri = mUri;
+        if(null != uri){
+            long id = MovieContract.MovieEntry.getMovieIdFromUri(uri);
+            mUri = MovieContract.MovieEntry.buildMovieUriWithId(id);
+            getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+        }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args){
+        Log.v(LOG_TAG, "loader created");
 
-        Intent intent = getActivity().getIntent();
-        if (intent == null) {
-            return null;
-        }
-
-//        if (null!= mUri){
+        if (null!= mUri){
             return new CursorLoader(getActivity(),
-                    intent.getData(),
+                    mUri,
                     DETAIL_COLUMNS,
                     null,
                     null,
                     null);
-//        }
-//        return null;
+        }
+        return null;
     }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        String baseUrl = "http://image.tmdb.org/t/p/w185/";
+        Log.v(LOG_TAG, "loader created finished");
+        if (!data.moveToFirst()) {return;}
 
-        if (data != null && data.moveToFirst()) {
             mMovieTitle.setText(data.getString(COL_MOVIE_TITLE));
             mMovieRelease.setText(data.getString(COL_MOVIE_RELEASE));
-            mMovieRating.setText(data.getString(COL_MOVIE_RATING) + "/10");
+            double userRating = data.getDouble(COL_MOVIE_RATING);
+            String userReviews = String.format("%.1f", userRating) + "/10 ";
+            mMovieRating.setText(userReviews);
             mMovieOverview.setText(data.getString(COL_MOVIE_OVERVIEW));
             String movieposter = data.getString(COL_MOVIE_IMG);
-            Picasso.with(getContext()).load(movieposter).into(mMoviePoster);
+            Picasso.with(getContext()).load(baseUrl + movieposter).into(mMoviePoster);
             Log.v(LOG_TAG, movieposter);
 
-            //mIsFavourite = data.getInt(COL_MOVIE_FAVOURITE) > 0;
+        mIsFavorite = data.getInt(COL_IS_FAVORITE);
 
-            MovieId = data.getString(COL_MOVIE_ID);
-            //this.updateReviews();
-            //this.updateTrailers();
+        Log.v(LOG_TAG, baseUrl+movieposter);
 
+        MovieId = data.getLong(COL_MOVIE_URI_ID);
+
+        if(MainActivity.getPaneMode()){
+            int iconType = (getState(MovieId, getContext()) == 1) ? R.drawable.ic_favorite_black_48dp : R.drawable.ic_favorite_border_black_48dp;
+            mImageButton.setImageResource(iconType);
+
+            int[] attr = new int[] {android.R.attr.listDivider};
+            TypedArray ta = getContext().obtainStyledAttributes(attr);
+            mDivider.setBackground(ta.getDrawable(0));
+            ta.recycle();
+
+            mHeader.setText("TRAILERS AND REVIEWS");
+
+            mTrailerButton.setText("TRAILERS");
+            mTrailerButton.setVisibility(View.VISIBLE);
+
+            mReviewButton.setText("REVIEWS");
+            mReviewButton.setVisibility(View.VISIBLE);
         }
     }
-//    public static String getFavouriteId(){
-//        return MovieId;
-//    }
+
     @Override
     public void onLoaderReset(Loader<Cursor> loader){
         //mDetailCursor = null;
     }
 
-    private void updateTrailers(){
-        FetchTrailerTask trailersTask = new FetchTrailerTask(getContext());
-        trailersTask.execute(MovieId);
-    }
-
-    private void updateReviews(){
-        FetchReviewsTask reviewsTask = new FetchReviewsTask();
-        reviewsTask.execute(MovieId);
-    }
-
-
-    public class FetchReviewsTask extends AsyncTask<String, Void, MovieReview[]>{
-
-        private MovieReview[] getReviewsDataFromJson(String reviewJsonStr)throws JSONException{
-
-            //these are the names of the JSON object that need to be extracted
-
-            final String RESULTS = "results";
-            final String REVIEW_ID = "id";
-            final String REVIEW_AUTHOR = "author";
-            final String REVIEW_CONTENT = "content";
-
-            JSONObject reviewJson = new JSONObject(reviewJsonStr);
-            JSONArray reviewArray = reviewJson.getJSONArray(RESULTS);
-
-            MovieReview[] resultStr = new MovieReview[reviewArray.length()];
-
-            //Here statement to obtent the id of the movie!!!
-            //Extract movie review data and build movie objects
-            for (int i = 0; i<reviewArray.length();i++){
-
-                String review_id;
-                String review_author;
-                String review_content;
-
-                JSONObject reviewdata = reviewArray.getJSONObject(i);
-
-                review_id = reviewdata.getString(REVIEW_ID);
-                review_author = reviewdata.getString(REVIEW_AUTHOR);
-                review_content = reviewdata.getString(REVIEW_CONTENT);
-
-                MovieReview element = new MovieReview(review_id,review_author,review_content);
-                resultStr[i]= element;
-
-
+    private void changeFavorites(boolean paneType) {
+        ActionMenuItemView item = (ActionMenuItemView) getActivity().findViewById(R.id.favorite_button);
+        ImageButton imageButton = (ImageButton) getActivity().findViewById(R.id.favorite_button_tab);
+        ContentValues contentValues = new ContentValues();
+        if (mIsFavorite == 1) {
+            contentValues.put(MovieContract.MovieEntry.COLUMN_IS_FAVORITE, 0);
+            getContext().getContentResolver().update(
+                    MovieContract.MovieEntry.CONTENT_URI,
+                    contentValues,
+                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                    new String[]{Long.toString(MovieId)}
+            );
+            if(paneType) {
+                imageButton.setImageResource(R.drawable.ic_favorite_border_black_48dp);
+            } else {
+                item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_white_36dp));
             }
-            return resultStr;
-
+            setState(0, MovieId);
+            Toast.makeText(getContext(), "Remove from Favorite", Toast.LENGTH_SHORT).show();
         }
-
-
-        @Override
-        protected MovieReview[] doInBackground(String... params) {
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String reviewJsonStr = null;
-
-            try{
-                //Construct the url
-                String URLString = null;
-                URLString = "http://api.themoviedb.org/3/movie/" + MovieId + "/reviews?api_key=e8e92e67635d148d3fc74a61aa393eec";
-                URL url = new URL(URLString);
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                //Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-
-                if (inputStream == null){
-                    reviewJsonStr = null;
-                }else{
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                }
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    reviewJsonStr = null;
-                }
-                reviewJsonStr = buffer.toString();
-
-            } catch (MalformedURLException e1) {
-                e1.printStackTrace();
-            } catch (ProtocolException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+        else {
+            contentValues.put(MovieContract.MovieEntry.COLUMN_IS_FAVORITE, 1);
+            getContext().getContentResolver().update(
+                    MovieContract.MovieEntry.CONTENT_URI,
+                    contentValues,
+                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                    new String[]{Long.toString(MovieId)}
+            );
+            if(paneType) {
+                imageButton.setImageResource(R.drawable.ic_favorite_black_48dp);
+            } else {
+                item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_white_36dp));
             }
-
-            try{
-                return getReviewsDataFromJson(reviewJsonStr);
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(MovieReview[] result){
-            if (result!=null){
-                try{
-                    reviewsadapter = new ReviewAdapter(getActivity(), Arrays.asList(result));
-                    ListReviews = (ListView) getView().findViewById(R.id.listview_reviews);
-                    ListReviews.setAdapter(reviewsadapter);
-                    setListViewHeightBasedOnChildren(ListReviews);
-
-                    //Code to be able to insert listview inside scrollview from http://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view
-                    ListReviews.setOnTouchListener(new View.OnTouchListener() {
-                        // Setting on Touch Listener for handling the touch inside ScrollView
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            // Disallow the touch request for parent scroll on touch of child view
-                            v.getParent().requestDisallowInterceptTouchEvent(true);
-                            return false;
-                        }
-                    });
-
-                }catch(NullPointerException e){
-                    e.printStackTrace();
-                }
-
-            }else{
-                Toast.makeText(getContext(), "Nothing to show", Toast.LENGTH_SHORT).show();
-            }
+            setState(1, MovieId);
+            Toast.makeText(getContext(), "Set as Favorite", Toast.LENGTH_SHORT).show();
         }
     }
 
-
-
-
+    private void setState(int isFavorite, long movieId){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(
+                "Favorite", Context.MODE_PRIVATE
+        );
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String key = "State" +Long.toString(movieId);
+        editor.putInt(key,isFavorite);
+        editor.apply();
+    }
 }

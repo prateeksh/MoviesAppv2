@@ -37,11 +37,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.prateek.moviesappv2.MainActivity" />
         </activity>
+
         <provider
-            android:authorities="@string/content_authority"
             android:name=".data.MovieProvider"
+            android:authorities="@string/content_authority"
             android:exported="false"
-            android:syncable="true"/>
+            android:syncable="true" />
+
+        <activity
+            android:name=".Review"
+            android:label="@string/title_activity_review"
+            android:parentActivityName=".MovieDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.prateek.moviesappv2.MovieDetailActivity" />
+        </activity>
     </application>
 
 </manifest>
