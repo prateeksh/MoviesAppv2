@@ -104,7 +104,6 @@ public class MovieDetailActivityFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "this is detail activity");
         Bundle arguments = getArguments();
         if(arguments != null){
             mUri = arguments.getParcelable(MovieDetailActivityFragment.DETAIL_URI);
