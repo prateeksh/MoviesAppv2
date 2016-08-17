@@ -1,82 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_scrollview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/MovieDetailTheme"
+    android:paddingTop="@dimen/padding"
     tools:context=".MovieDetailActivityFragment"
     tools:shownIn="@layout/activity_movie_detail">
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        style="@style/MovieDetailTheme.Vertical"
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
-        android:orientation="vertical">
+        >
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            style="@style/MovieDetailTheme.Horizontal"
             android:layout_weight="2"
-            android:orientation="horizontal">
+            >
             <TextView
                 android:id="@+id/Original_Title"
-                style="@style/CodeFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/MovieDetailTheme"
                 android:gravity="center_horizontal"
-                android:padding="16dp"
+                android:padding="@dimen/padding"
                 android:textSize="32sp"
                 />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            style="@style/MovieDetailTheme.Horizontal"
             android:layout_weight="1"
             android:baselineAligned="false"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="@dimen/padding">
             <ImageView
                 android:id="@+id/Movie_Image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                style="@style/DetailViewTheme"
+                android:contentDescription="@string/movie_discription"
+                android:paddingEnd="@dimen/padding_right"
+                android:paddingLeft="@dimen/padding_left"
+               android:paddingRight="@dimen/padding_right"
+                android:paddingStart="@dimen/padding_left"/>
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/MovieDetailTheme.Vertical"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                >
 
                 <TextView
                     android:id="@+id/release"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="22sp"
+                    style="@style/DetailViewTheme"
+                    android:textAppearance="?android:textAppearanceLarge"
                     android:textStyle="bold"/>
                 <TextView
                     android:id="@+id/rating"
-                    style="@style/Item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/DetailViewTheme"
+                    android:layout_marginBottom="@dimen/margin_bottom"
+
                     />
                 <ImageButton
                     android:id="@+id/favorite_button_tab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/DetailViewTheme"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/fravorite_button"
                     android:elevation="8dp"/>
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            style="@style/MovieDetailTheme.Vertical"
             android:layout_weight="2"
-            android:orientation="vertical">
+           android:padding="@dimen/padding">
             <TextView
                 android:id="@+id/Plot"
-                style="@style/Item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/DetailViewTheme"
+                android:textAppearance="?android:textAppearanceMedium"
                 />
         </LinearLayout>
         <View
@@ -85,16 +80,17 @@
             android:layout_height="1dp"/>
         <TextView
             android:id="@+id/header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"/>
+            style="@style/DetailViewTheme"
+            android:layout_marginBottom="@dimen/margin_bottom"
+            android:layout_marginTop="@dimen/margin_bottom"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            style="@style/MovieDetailTheme"
+            android:orientation="horizontal"
+            >
             <Button
                 android:id="@+id/trailer_button"
+                style="?android:attr/buttonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -103,6 +99,7 @@
                 android:visibility="gone"/>
             <Button
                 android:id="@+id/review_button"
+                style="?android:attr/buttonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

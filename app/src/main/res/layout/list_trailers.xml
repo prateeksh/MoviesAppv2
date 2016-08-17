@@ -2,7 +2,11 @@
 <GridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/trailer_grid"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:focusable="true"
-    android:gravity="center">
+    android:gravity="center"
+    android:horizontalSpacing="0dp"
+    android:padding="@dimen/padding"
+    android:stretchMode="columnWidth"
+    android:verticalSpacing="1dp">
 </GridView>

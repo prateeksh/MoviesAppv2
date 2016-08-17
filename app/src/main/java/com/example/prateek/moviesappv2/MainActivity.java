@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }else{
             Intent intent = new Intent(this, MovieDetailActivity.class)
                     .setData(contentUri);
-            Log.v(LOG_TAG, contentUri.toString());
             startActivity(intent);
         }
     }

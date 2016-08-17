@@ -93,4 +93,11 @@
     <string name="movie_url" translatable="false">movie</string>
     <string name="no_movies">No Movies Available</string>
 
+    <string name="trailer">TRAILERS</string>
+    <string name="reviews">REVIEWS</string>
+    <string name="trailer_review">TRAILER AND REVIEWS</string>
+
+    <string name="fravorite_button">Favorite</string>
+    <string name="movie_discription">Movie Image</string>
+    <string name="trailer_discrip">Trailers</string>
 </resources>

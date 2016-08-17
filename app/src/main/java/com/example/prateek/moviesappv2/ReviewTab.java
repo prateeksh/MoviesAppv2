@@ -23,11 +23,13 @@ import com.example.prateek.moviesappv2.data.MovieContract;
  * Created by Prateek on 13-08-2016.
  */
 public class ReviewTab extends Fragment implements LoaderCallbacks<Cursor> {
+
     public static final String REVIEW_URI = "REVIEW_URI";
     public static final int COL_REVIEW_ID = 1;
     public static final int COL_AUTHOR = 2;
     static final int COL_ID = 0;
     private static final int REVIEW_LOADER = 0;
+
     private static final String[] REVIEW_COLUMNS = {
             MovieContract.MovieReviewEntry.TABLE_NAME + "." + MovieContract.MovieReviewEntry._ID,
             MovieContract.MovieReviewEntry.TABLE_NAME + "." + MovieContract.MovieReviewEntry.COLUMN_ID,

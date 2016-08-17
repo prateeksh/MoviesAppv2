@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +27,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     public static final int CURSOR_LOADER_ID = 0;
     public static final int COL_MOVIE_ID = 0;
+
     public static final int COL_MOVIE_URI_ID = 1;
      static final int COL_MOVIE_POSTER = 2;
+
     private static final String[] DETAIL_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID,
@@ -42,6 +45,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private GridView gridView;
     private View rootView = null;
     private int mPosition = GridView.INVALID_POSITION;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
 
     public MainActivityFragment() {
     }
@@ -69,6 +74,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         gridView = (GridView) rootView.findViewById(R.id.gridview);
         gridView.setAdapter(customAdapter);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
 
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
@@ -96,6 +102,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 mPosition = position;
             }
         });
+                mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        onSortingOrderChanged();
+                    }
+                });
+
                 rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                 width = rootView.getMeasuredWidth();
@@ -159,6 +172,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     public void onSortingOrderChanged(){
+        mSwipeRefreshLayout.setRefreshing(true);
         updateMovieDetail();
         getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
     }
@@ -173,9 +187,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         String sorting_order = Utility.getPreferedSorting(getActivity());
         fetchMovieData.execute(sorting_order);
         getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     public interface Callback{
         public void onItemSelected(Uri idUri);
     }
+
 }

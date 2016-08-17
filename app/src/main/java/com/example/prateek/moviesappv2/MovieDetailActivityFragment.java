@@ -38,7 +38,9 @@ public class MovieDetailActivityFragment extends Fragment implements
 
 
     public static final String DETAIL_URI = "DETAIL_URI";
+
     private static final String LOG_TAG = MovieDetailActivityFragment.class.getSimpleName();
+
     private static final String[] DETAIL_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID,
@@ -77,8 +79,6 @@ public class MovieDetailActivityFragment extends Fragment implements
     public MovieDetailActivityFragment() {
         setHasOptionsMenu(true);
     }
-
-
 
     public static int getState(long movieId, Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(
@@ -230,7 +230,8 @@ public class MovieDetailActivityFragment extends Fragment implements
         Log.v(LOG_TAG, "loader created");
 
         if (null!= mUri){
-            return new CursorLoader(getActivity(),
+            return new CursorLoader(
+                    getActivity(),
                     mUri,
                     DETAIL_COLUMNS,
                     null,
@@ -243,20 +244,30 @@ public class MovieDetailActivityFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         String baseUrl = "http://image.tmdb.org/t/p/w185/";
-        Log.v(LOG_TAG, data.toString());
 
-        if (!data.moveToFirst()) {return;}
 
-        mMovieTitle.setText(data.getString(COL_MOVIE_TITLE));
-        mMovieRelease.setText(data.getString(COL_MOVIE_RELEASE));
+        if (!data.moveToFirst()) {
+            return;}
+
+        String originalTitle = data.getString(COL_MOVIE_TITLE);
+        mMovieTitle.setText(originalTitle);
+        Log.v(LOG_TAG, originalTitle);
+
+        String releaseDate = data.getString(COL_MOVIE_RELEASE);
+        mMovieRelease.setText(releaseDate);
+
         double userRating = data.getDouble(COL_MOVIE_RATING);
         String userReviews = String.format("%.1f", userRating) + "/10 ";
         mMovieRating.setText(userReviews);
+
         String overView = data.getString(COL_MOVIE_OVERVIEW);
         mMovieOverview.setText(overView);
-        String movieposter = data.getString(COL_MOVIE_IMG);
-        Picasso.with(getContext()).load(baseUrl + movieposter).into(mMoviePoster);
 
+        String movieposter = data.getString(COL_MOVIE_IMG);
+        Picasso.with(getContext()).load(baseUrl + movieposter)
+                .placeholder(R.drawable.android_placeholder).into(mMoviePoster);
+
+        Log.v(LOG_TAG, movieposter);
         //mIsFavorite = data.getInt(COL_IS_FAVORITE);
 
         MovieId = data.getLong(COL_MOVIE_URI_ID);
@@ -270,12 +281,12 @@ public class MovieDetailActivityFragment extends Fragment implements
             mDivider.setBackground(ta.getDrawable(0));
             ta.recycle();
 
-            mHeader.setText("TRAILERS AND REVIEWS");
+            mHeader.setText(getResources().getText(R.string.trailer_review));
 
-            mTrailerButton.setText("TRAILERS");
+            mTrailerButton.setText(getResources().getText(R.string.trailer));
             mTrailerButton.setVisibility(View.VISIBLE);
 
-            mReviewButton.setText("REVIEWS");
+            mReviewButton.setText(getResources().getText(R.string.reviews));
             mReviewButton.setVisibility(View.VISIBLE);
         }
     }
